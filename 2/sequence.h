@@ -32,9 +32,12 @@ struct Iterator
 
 struct Sequence
 {
+  int size;
   PIterator (*begin)(PSequence self);
   void (*append)(PSequence self, int val);
   void (*free)(PSequence self);
 };
+
+int Seq_getSize(PSequence self);
 
 #endif
