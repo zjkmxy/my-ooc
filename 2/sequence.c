@@ -1,3 +1,5 @@
+/*2:2*/
+
 #include <stdio.h>
 #include "sequence.h"
 
