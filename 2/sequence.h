@@ -27,17 +27,19 @@ struct Iterator
 {
   BOOL (*isEnd)(PIterator self);
   int (*getVal)(PIterator self);
-  PIterator (*getNext)(PIterator self);
+  void (*getNext)(PIterator self);
+  void (*free)(PIterator self);
 };
 
 struct Sequence
 {
   int size;
   PIterator (*begin)(PSequence self);
-  void (*append)(PSequence self, int val);
+  BOOL (*append)(PSequence self, int val);
   void (*free)(PSequence self);
 };
 
 int Seq_getSize(PSequence self);
+void Seq_print(PSequence self, int maxLength);
 
 #endif

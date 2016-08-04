@@ -9,10 +9,18 @@ typedef struct List *PList;
 struct ListNode;
 typedef struct ListNode ListNode;
 typedef struct ListNode *PListNode;
+struct ListIt;
+typedef struct ListIt ListIt;
+typedef struct ListIt *PListIt;
+
+struct ListIt
+{
+  Iterator base;
+  PListNode ptr;
+};
 
 struct ListNode
 {
-  Iterator base;
   int val;
   PListNode next;
 };

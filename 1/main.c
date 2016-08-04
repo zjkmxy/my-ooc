@@ -200,7 +200,7 @@ void Array_append(PArray self, int val)
 {
   if(self->size == self->capcity)
   {
-    return ;
+    return ; /* 预分配空间满了；注意这并不是良好的错误处理方式 */
   }
   else
   {
