@@ -42,15 +42,15 @@ struct ClassDesc
   PCClassDesc super_class;
 };
 
-extern const ClassDesc object_class;
-extern const ClassDesc class_class;
+extern const ClassDesc Object_class;
+extern const ClassDesc Class_class;
 
 PCClassDesc Obj_classOf(PCObject self);
 bool Obj_instOf(PCObject self, PCClassDesc class_desc);
 PObject Obj_new(PCClassDesc class_desc);
 void Obj_free(PObject self);
 
-#define new Obj_new
-#define delete Obj_free
+#define new(classname)  (classname*)Obj_new(classname##_class)
+#define delete(ptr) Obj_free((PObject)ptr)
 
 #endif

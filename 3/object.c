@@ -41,3 +41,17 @@ void Obj_free(PObject self)
   self->class_desc->destroy(self);
   free(self);
 }
+
+const ClassDesc Object_class = {
+  {&Class_class},
+  sizeof(Object),
+  Obj_destroy,
+  NULL
+};
+
+const ClassDesc Class_class = {
+  {&Class_class},
+  sizeof(ClassDesc),
+  Obj_destroy,
+  &Object_class
+};
