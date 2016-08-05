@@ -1,0 +1,56 @@
+#ifndef _OBJECT_H
+#define _OBJECT_H
+
+#include <stddef.h>
+#include <stdbool.h>
+#include <assert.h>
+
+/* 未使用的参数 */
+#define UNUSED(param) (void)(param)
+
+/*
+ * 取得成员偏移，即(&var->member - var)按字节数计量
+ */
+#define OFFSETOF(type, member) ((size_t) &((type*)0)->member)
+
+/*
+ * 通过成员地址取得所在结构体基地址
+ * 相当于已知ptr = &var->member，求var
+ */
+#define CONTAINER_OF(ptr, type, member) \
+  (type*)((char*)(ptr) - OFFSETOF(type, member))
+
+struct ClassDesc;
+typedef struct ClassDesc ClassDesc;
+typedef struct ClassDesc *PClassDesc;
+typedef const struct ClassDesc *PCClassDesc;
+struct Object;
+typedef struct Object Object;
+typedef struct Object *PObject;
+typedef const struct Object *PCObject;
+
+struct Object
+{
+  PCClassDesc class_desc;
+};
+
+struct ClassDesc
+{
+  Object base;
+  size_t size;
+  void (*destroy)(PObject self);
+  PCClassDesc super_class;
+};
+
+extern const ClassDesc object_class;
+extern const ClassDesc class_class;
+
+PCClassDesc Obj_classOf(PCObject self);
+bool Obj_instOf(PCObject self, PCClassDesc class_desc);
+PObject Obj_new(PCClassDesc class_desc);
+void Obj_free(PObject self);
+
+#define new Obj_new
+#define delete Obj_free
+
+#endif
