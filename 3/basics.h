@@ -21,10 +21,10 @@ typedef struct Float *PFloat;
 struct IAdditive
 {
   Object base;
-  PPlachta (*plus)(PPlachta self, PPlachta rhs);
-  PPlachta (*addedWithInt)(PPlachta self, PInteger lhs);
-  PPlachta (*addedWithFloat)(PPlachta self, PFloat lhs);
-  void (*print)(PPlachta self, char* buf, size_t buf_len);
+  PIAdditive (*plus)(PIAdditive self, PIAdditive rhs);
+  PIAdditive (*addedWithInt)(PIAdditive self, PInteger lhs);
+  PIAdditive (*addedWithFloat)(PIAdditive self, PFloat lhs);
+  void (*print)(PIAdditive self, char* buf, size_t buf_len);
 };
 
 struct Integer{
@@ -37,8 +37,12 @@ struct Float{
   float val;
 };
 
+extern const ClassDesc Plachta_class;
+extern const ClassDesc Integer_class;
+extern const ClassDesc Float_class;
+
 PInteger Int_create(PInteger ret, int val);
-PFloat Float_create(PFloat ret, int val);
+PFloat Float_create(PFloat ret, float val);
 
 #endif
 

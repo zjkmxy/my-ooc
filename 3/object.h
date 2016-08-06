@@ -49,8 +49,9 @@ PCClassDesc Obj_classOf(PCObject self);
 bool Obj_instOf(PCObject self, PCClassDesc class_desc);
 PObject Obj_new(PCClassDesc class_desc);
 void Obj_free(PObject self);
+void Obj_destroy(PObject self);
 
-#define new(classname)  (classname*)Obj_new(classname##_class)
+#define new(classname)  (classname*)Obj_new(&classname##_class)
 #define delete(ptr) Obj_free((PObject)ptr)
 
 #endif

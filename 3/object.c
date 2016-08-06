@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-static void Obj_destroy(PObject self)
+void Obj_destroy(PObject self)
 {
   UNUSED(self);
 }
