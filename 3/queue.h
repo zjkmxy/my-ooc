@@ -25,7 +25,8 @@ PQueue Queue_create(PQueue ret, PCClassDesc type);
 bool Queue_push(PQueue self, PObject val);
 PObject Queue_front(PQueue self);
 void Queue_pop(PQueue self);
-int Queue_size(PQueue size);
+int Queue_size(PQueue self);
+PCClassDesc Queue_template(PQueue self);
 
 #endif
 

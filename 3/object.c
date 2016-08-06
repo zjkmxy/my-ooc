@@ -15,29 +15,24 @@ PCClassDesc Obj_classOf(PCObject self)
 
 bool Obj_instOf(PCObject self, PCClassDesc class_desc)
 {
-  PCClassDesc desc;
   if(!self && !self->class_desc)
     return false;
-  if(class_desc == &object_class)
+  if(class_desc == &Object_class)
     return true;
-
-  for(desc = self->class_desc; desc; desc = desc->super_class)
-  {
-    if(desc == class_desc)
-      return true;
-  }
-
-  return false;
+  return Class_kindOf(self->class_desc, class_desc);
 }
 
 PObject Obj_new(PCClassDesc class_desc)
 {
   assert(class_desc);
-  return (PObject)malloc(class_desc->size);
+  PObject ret = (PObject)malloc(class_desc->size);
+  ret->class_desc = class_desc;
+  return ret;
 }
 
 void Obj_free(PObject self)
 {
+  assert(self && self->class_desc && self->class_desc->destroy);
   self->class_desc->destroy(self);
   free(self);
 }
@@ -55,3 +50,20 @@ const ClassDesc Class_class = {
   Obj_destroy,
   &Object_class
 };
+
+PCClassDesc Class_getBase(PCClassDesc self)
+{
+  return self->super_class;
+}
+
+bool Class_kindOf(PCClassDesc self, PCClassDesc base)
+{
+  PCClassDesc desc;
+  for(desc = self; desc; desc = desc->super_class)
+  {
+    if(desc == base)
+      return true;
+  }
+  return false;
+}
+

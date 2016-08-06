@@ -51,6 +51,9 @@ PObject Obj_new(PCClassDesc class_desc);
 void Obj_free(PObject self);
 void Obj_destroy(PObject self);
 
+PCClassDesc Class_getBase(PCClassDesc self);
+bool Class_kindOf(PCClassDesc self, PCClassDesc base);
+
 #define new(classname)  (classname*)Obj_new(&classname##_class)
 #define delete(ptr) Obj_free((PObject)ptr)
 

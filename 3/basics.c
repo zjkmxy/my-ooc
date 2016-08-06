@@ -94,10 +94,11 @@ PIAdditive Float_addedWithFloat(PIAdditive self, PFloat lhs)
 
 void Int_print(PIAdditive self, char* buf, size_t buf_len)
 {
+  size_t i = 0;
   int val = ((PInteger)self)->val;
   char* tmp = (char*)malloc(1024);
   sprintf(tmp, "%d", val);
-  for(size_t i = 0; tmp[i] && i < buf_len - 1; i ++)
+  for(i = 0; tmp[i] && i < buf_len - 1; i ++)
   {
     buf[i] = tmp[i];
   }
@@ -107,10 +108,11 @@ void Int_print(PIAdditive self, char* buf, size_t buf_len)
 
 void Float_print(PIAdditive self, char* buf, size_t buf_len)
 {
+  size_t i = 0;
   float val = ((PFloat)self)->val;
   char* tmp = (char*)malloc(1024);
   sprintf(tmp, "%f", val);
-  for(size_t i = 0; tmp[i] && i < buf_len - 1; i ++)
+  for(i = 0; tmp[i] && i < buf_len - 1; i ++)
   {
     buf[i] = tmp[i];
   }
