@@ -20,7 +20,8 @@
  * 所有的Object，因而我们无法在List.push方法中使用dynamic_cast检测传入的参数类型。
  *
  * Java的泛型：Java的泛型仅限于编译时，运行时刻Java根本不知道你是否将一个int类型的
- * 对象传递给了List<float>做参数。然而C语言编译器无法
+ * 对象传递给了List<float>做参数。然而C语言编译器无法为我们进行编译时检查。
+ *
  */
 
 #ifndef _OBJECT_H
