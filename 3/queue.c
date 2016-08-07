@@ -1,3 +1,5 @@
+/*3:6*/
+
 #include "queue.h"
 #include <string.h>
 #include <stdlib.h>
@@ -43,6 +45,7 @@ bool Queue_push(PQueue self, PObject val)
 {
   PListNode cur;
 
+  /* 我们在这里检查val的取值 */
   if(!Obj_instOf(val, self->type))
     return false;
 

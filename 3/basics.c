@@ -1,11 +1,13 @@
+/*3:4*/
+
 #include "basics.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-const ClassDesc Plachta_class = {
+const ClassDesc IAdditive_class = {
   {&Class_class},
-  sizeof(Plachta),
+  sizeof(IAdditive),
   Obj_destroy,
   &Object_class
 };
@@ -14,14 +16,14 @@ const ClassDesc Integer_class = {
   {&Class_class},
   sizeof(Integer),
   Obj_destroy,
-  &Plachta_class
+  &IAdditive_class
 };
 
 const ClassDesc Float_class = {
   {&Class_class},
   sizeof(Float),
   Obj_destroy,
-  &Plachta_class
+  &IAdditive_class
 };
 
 static PIAdditive Int_plus(PIAdditive self, PIAdditive rhs);
@@ -50,6 +52,8 @@ PFloat Float_create(PFloat ret, float val)
 {
   ret->val = val;
 
+  /* 这里可以直接调用父类构造函数，而不用担心内存分配问题 */
+
   ret->base.plus = Float_plus;
   ret->base.addedWithInt = Float_addedWithInt;
   ret->base.addedWithFloat = Float_addedWithFloat;
@@ -70,26 +74,27 @@ PIAdditive Float_plus(PIAdditive self, PIAdditive rhs)
 
 PIAdditive Int_addedWithInt(PIAdditive self, PInteger lhs)
 {
+  /* 现在我们可以使用宏来更简单地创建对象 */
   PInteger ret = Int_create(new(Integer), lhs->val + ((PInteger)self)->val);
-  return (PPlachta)ret;
+  return (PIAdditive)ret;
 }
 
 PIAdditive Int_addedWithFloat(PIAdditive self, PFloat lhs)
 {
   /* 利用对称性 */
-  return Float_addedWithInt((PPlachta)lhs, (PInteger)self);
+  return Float_addedWithInt((PIAdditive)lhs, (PInteger)self);
 }
 
 PIAdditive Float_addedWithInt(PIAdditive self, PInteger lhs)
 {
   PFloat ret = Float_create(new(Float), (float)lhs->val + ((PFloat)self)->val);
-  return (PPlachta)ret;
+  return (PIAdditive)ret;
 }
 
 PIAdditive Float_addedWithFloat(PIAdditive self, PFloat lhs)
 {
   PFloat ret = Float_create(new(Float), lhs->val + ((PFloat)self)->val);
-  return (PPlachta)ret;
+  return (PIAdditive)ret;
 }
 
 void Int_print(PIAdditive self, char* buf, size_t buf_len)
