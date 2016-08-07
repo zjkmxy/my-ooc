@@ -22,6 +22,9 @@
  * Java的泛型：Java的泛型仅限于编译时，运行时刻Java根本不知道你是否将一个int类型的
  * 对象传递给了List<float>做参数。然而C语言编译器无法为我们进行编译时检查。
  *
+ * 因此我们在C语言中采用动态检查的策略：List在构造函数中接受一个类型参数，然后在
+ * 相关函数调用中通过assert检查参数是否被满足。这要求我们动态保存每个对象的类型信息。
+ * 编程中，这种允许程序在运行时刻内省地获得自身的信息的机制成为“反射”。
  */
 
 #ifndef _OBJECT_H
@@ -55,32 +58,76 @@ typedef struct Object Object;
 typedef struct Object *PObject;
 typedef const struct Object *PCObject;
 
+/* 对象类：每个对象都有类描述符 */
 struct Object
 {
   PCClassDesc class_desc;
 };
 
+/* 类描述符类，当然它是Object的子类 */
 struct ClassDesc
 {
+  /* 基类 */
   Object base;
+
+  /* 尺寸 */
   size_t size;
+
+  /* 析构函数 */
   void (*destroy)(PObject self);
+
+  /* 基类的描述符 */
   PCClassDesc super_class;
 };
 
+/* Object类的描述符 */
 extern const ClassDesc Object_class;
+
+/* Class类的描述符 */
 extern const ClassDesc Class_class;
 
+/* 取得self的类型信息 */
 PCClassDesc Obj_classOf(PCObject self);
+
+/* 判断self是否是class_desc类的对象，考虑继承 */
 bool Obj_instOf(PCObject self, PCClassDesc class_desc);
+
+/* 
+ * 为类class的对象分配内存
+ * 类描述符使得我们可以将内存分配和构造函数剥离开，采用统一的函数分配内存
+ */
 PObject Obj_new(PCClassDesc class_desc);
+
+/*
+ * 释放self
+ * 自动调用析构函数
+ */
 void Obj_free(PObject self);
+
+/*
+ * Object类的默认析构函数（什么都不做）
+ */
 void Obj_destroy(PObject self);
 
+/*
+ * 取得某个类的基类
+ */
 PCClassDesc Class_getBase(PCClassDesc self);
+
+/*
+ * 判断self是否是base的子类
+ */
 bool Class_kindOf(PCClassDesc self, PCClassDesc base);
 
+/*
+ * 快速分配内存的语法糖
+ * 这样我们就可以写：PCLASS VAR = CLASS_create(new(CLASS), ...);
+ */
 #define new(classname)  (classname*)Obj_new(&classname##_class)
+
+/*
+ * 删除某个对象的语法糖
+ */
 #define delete(ptr) Obj_free((PObject)ptr)
 
 #endif
