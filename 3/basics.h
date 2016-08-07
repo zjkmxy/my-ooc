@@ -40,10 +40,16 @@ typedef struct Float *PFloat;
  */
 struct IAdditive
 {
+  /* private */
   Object base;
-  PIAdditive (*plus)(PIAdditive self, PIAdditive rhs);
   PIAdditive (*addedWithInt)(PIAdditive self, PInteger lhs);
   PIAdditive (*addedWithFloat)(PIAdditive self, PFloat lhs);
+
+  /* public */
+  /* 将self与rhs相加，返回新建的结果对象 */
+  PIAdditive (*plus)(PIAdditive self, PIAdditive rhs);
+
+  /* 将self打印到buf中，buf最长不超过buf_len */
   void (*print)(PIAdditive self, char* buf, size_t buf_len);
 };
 
