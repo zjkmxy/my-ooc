@@ -47,6 +47,13 @@ struct IAdditive
   void (*print)(PIAdditive self, char* buf, size_t buf_len);
 };
 
+/*
+ * 另外，IAdditive类选择将虚拟函数放在结构体里，而不是像
+ * 析构函数一样放在类描述符里。这样调用比较方便，但是也带
+ * 来了额外的开销。成熟的对象系统，如C++和GObject(C语言)
+ * 会将所有的虚方法都存在额外的虚方法表/类描述符里。
+ */
+
 struct Integer{
   IAdditive base;
   int val;
