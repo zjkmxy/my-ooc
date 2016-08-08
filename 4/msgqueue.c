@@ -6,10 +6,17 @@
 #include <string.h>
 #include <stdlib.h>
 
+/*
+ * 回调函数链表节点
+ * 如果可能的话，哈希表会更好
+ */
 struct MsgQueue_CBNode;
 typedef struct MsgQueue_CBNode MsgQueue_CBNode;
 typedef struct MsgQueue_CBNode *PMsgQueue_CBNode;
 
+/*
+ * 回调事件队列的节点
+ */
 struct MsgQueue_EventNode;
 typedef struct MsgQueue_EventNode MsgQueue_EventNode;
 typedef struct MsgQueue_EventNode *PMsgQueue_EventNode;
@@ -18,7 +25,7 @@ struct MsgQueue
 {
   Object base;
 
-  /* 回调函数的注册表 */
+  /* 回调函数的注册表(链表) */
   PMsgQueue_CBNode cb_head;
   PMsgQueue_CBNode cb_tail;
 
@@ -26,7 +33,7 @@ struct MsgQueue
   PQueue event_queue;
 };
 
-/* 消息队列的析构函数 */
+/* 消息队列的析构函数，消灭消息 */
 void MsgQueue_destroy(PObject self_obj);
 
 /* 根据消息的类型检出回调函数，失败返回NULL */
@@ -95,6 +102,7 @@ void MsgQueue_register(PMsgQueue self, PCClassDesc type, PCallback func)
 {
   PMsgQueue_CBNode cur;
   
+  /* 如果当前类型已经有了回调，就覆盖掉 */
   for(cur = self->cb_head; cur; cur = cur->next)
   {
     if(cur->type == type)
@@ -104,6 +112,7 @@ void MsgQueue_register(PMsgQueue self, PCClassDesc type, PCallback func)
     }
   }
 
+  /* 否则就创建新的并加入 */
   cur = (PMsgQueue_CBNode)malloc(sizeof(MsgQueue_CBNode));
   cur->type = type;
   cur->func = func;
@@ -126,6 +135,7 @@ void MsgQueue_destroy(PObject self_obj)
   PMsgQueue_CBNode cur;
   PObject event;
 
+  /* 清理所有的回调注册节点 */
   for(cur = self->cb_head; cur; cur = self->cb_head)
   {
     self->cb_head = cur->next;
@@ -150,6 +160,7 @@ PCallback MsgQueue_translate(PMsgQueue self, PCClassDesc type)
   if(!type)
     return false;
 
+  /* 先找type，如果存在则返回，不存在则找type的基类，直到根 */
   for(cur = self->cb_head; cur; cur = cur->next)
   {
     if(cur->type == type)
@@ -167,6 +178,7 @@ bool MsgQueue_post(PMsgQueue self, PObject msg)
       Obj_classOf(msg));
   if(func)
   {
+    /* 如果存在处理函数，就加入队列，否则退信 */
     Queue_push(
         self->event_queue,
         (PObject)MsgQueue_EventNode_create(
