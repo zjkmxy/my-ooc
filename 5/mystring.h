@@ -1,3 +1,5 @@
+/*5:3*/
+
 #ifndef _MYSTRING_H
 #define _MYSTRING_H
 

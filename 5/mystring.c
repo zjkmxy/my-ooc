@@ -1,3 +1,5 @@
+/*5:4*/
+
 #include "mystring.h"
 #include <stdio.h>
 #include <string.h>
@@ -46,7 +48,7 @@ void Str_setAt(PString *self, size_t pos, char ch)
   PString ret = *self;
   assert(pos <= (*self)->length);
   /* 修改时如果是多重引用，就复制一个 */
-  if(((PObject)*self)->ref > 1)
+  if(getref(self) > 1)
   {
     ((PObject)*self)->ref --;
     ret = Str_create(new(String), (*self)->buf);

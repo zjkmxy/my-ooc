@@ -1,4 +1,4 @@
-/*4:3*/
+/*5:5*/
 
 #include <stdio.h>
 #include "mystring.h"
