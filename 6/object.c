@@ -132,7 +132,8 @@ void MH_rearrange()
   {
     if(from->refs == NULL)
     {
-      /* 如果是无引用对象，直接跳过 */
+      /* 如果是无引用对象，直接析构、跳过 */
+      from->meta->destroy(from);
       from = (PObject)((char*)from + from->meta->size);
     }
     else

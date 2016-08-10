@@ -60,11 +60,8 @@ PInt fibonacci(int x)
   return a;
 }
 
-int main()
+void fibTest()
 {
-  MH_init(2048, 2048);
-  MH_loadClass(1, &Int_class);
-
   PInt val = NULL;
   MH_enter(1, &val);
 
@@ -72,6 +69,92 @@ int main()
   Int_print(val);
 
   MH_leave();
+}
+
+/************************************************************************/
+
+struct Link;
+typedef struct Link Link;
+typedef struct Link *PLink;
+
+struct Link
+{
+  Object base;
+  int val;
+  PLink next;
+};
+PLink Link_global = NULL;
+
+void Link_loader();
+
+const FieldDesc Link_fields_desc[] = {OFFSETOF(Link, next)};
+const ClassDesc Link_class =
+{
+  sizeof(Link),
+  Obj_destroy,
+  Link_loader,
+  &Object_class,
+  Link_fields_desc,
+  ARRAY_SIZE(Link_fields_desc)
+};
+
+void Link_loader()
+{
+  MH_addStackVar((PObject*)&Link_global);
+}
+
+PLink Link_create(PLink ret, int val, PLink next)
+{
+  ret->val = val;
+  ret->next = next;
+  return ret;
+}
+
+PLink Link_pushHead(PLink self, int val)
+{
+  return Link_create(new(Link), val, self);
+}
+
+void linkTest1()
+{
+  MH_enter(0);
+
+  Link_global = Link_pushHead(Link_global, 1);
+  Link_global = Link_pushHead(Link_global, 2);
+  Link_global = Link_pushHead(Link_global, 3);
+  Link_global = Link_pushHead(Link_global, 4);
+  Link_global = Link_pushHead(Link_global, 5);
+  Link_global->next->next = NULL;
+
+  MH_leave();
+}
+
+void linkTest2()
+{
+  PLink cur = NULL;
+  MH_enter(1, &cur);
+
+  for(cur = Link_global; cur; cur = cur->next)
+  {
+    printf("%d\n", cur->val);
+  }
+
+  MH_leave();
+}
+
+/************************************************************************/
+
+int main()
+{
+  MH_init(2048, 2048);
+  MH_loadClass(2, &Int_class, &Link_class);
+
+  MH_enter(0);
+  linkTest1();
+  fibTest();
+  linkTest2();
+  MH_leave();
+  
   MH_final();
   return 0;
 }

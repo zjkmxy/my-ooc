@@ -76,7 +76,7 @@ struct ClassDesc
   PCClassDesc super_class;
 
   /* 对象指针字段的偏移(数组) */
-  FieldDesc *fields;
+  const FieldDesc *fields;
 
   /* 对象指针字段的个数 */
   size_t field_cnt;
@@ -96,6 +96,9 @@ PObject MH_alloc(Class klass);
 
 /* 初始化托管堆 */
 void MH_init(size_t buflen, size_t var_count);
+
+/* 增加栈上变量 */
+void MH_addStackVar(PObject *var);
 
 /* 进入新的函数 */
 void MH_enter(int var_cnt, ...);
