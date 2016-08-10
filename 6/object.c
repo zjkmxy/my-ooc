@@ -44,11 +44,7 @@ void MH_cleanAllTag()
   while(cur < MH_inst.top)
   {
     /* 在垃圾回收执行前，不应当有引用链存在 */
-    ////assert(obj->refs == NULL);
-    if(obj->refs != NULL)
-    {
-      obj = obj;
-    }
+    assert(obj->refs == NULL);
     cur += obj->meta->size;
   }
 }
@@ -113,12 +109,7 @@ size_t MH_moveObject(PObject from, PObject to)
   for(cur = to->refs; cur; cur = to->refs)
   {
     /* 更改引用从ori到to */
-    ////assert(*cur->ref == from);
-    if(*cur->ref != from)
-    {
-      cur = cur;
-    }
-
+    assert(*cur->ref == from);
     *cur->ref = to;
 
     /* 删除引用链 */
@@ -147,16 +138,7 @@ void MH_rearrange()
     else
     {
       /* 否则移动对象 */
-      if(from != to)
-      {
-        siz = MH_moveObject(from, to);
-      }
-      else
-      {
-        /* 直接清空引用链 */
-        //这里bug
-        siz = from->meta->size;
-      }
+      siz = MH_moveObject(from, to);
       from = (PObject)((char*)from + siz);
       to = (PObject)((char*)to + siz);
     }
@@ -250,9 +232,6 @@ void MH_loadClass(int class_cnt, ...)
 
   /* 开启变参表 */
   va_start(ap, class_cnt);
-
-  /* 设置栈分页标志NULL */
-  MH_addStackVar(NULL);
   for(i = 0; i < class_cnt; i ++)
   {
     klass = va_arg(ap, Class);
