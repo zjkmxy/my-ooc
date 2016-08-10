@@ -1,4 +1,4 @@
-/*5:2*/
+/*6:2*/
 
 #include "object.h"
 #include <string.h>
@@ -21,21 +21,34 @@ struct ManagedHeap
   size_t buflen;
   char* top;
 
-  /* 根对象栈 */
+  /* 
+   * 根对象栈 
+   * 因为是变量地址(PObject*)的数组
+   * 所以是三级指针
+   * stack_len存的是数组长度而不是字节数
+   */
   PObject **stack;
   size_t stack_len;
   PObject **stack_top;
 };
 
+/* 托管堆全局唯一实例 */
 ManagedHeap MH_inst;
 
 struct RefLink
 {
+  /* 引用变量地址 */
   PObject *ref;
+
+  /* 链表的下一个元素 */
   PRefLink next;
 };
 
-/* 清除所有的访问标记 */
+/* 
+ * 清除所有的访问标记
+ * 因为本来就没维护引用，所以这里只是检查了一下引用是不是空
+ * Release生成的时候可以直接去掉这个函数……
+ */
 void MH_cleanAllTag()
 {
   char* cur = MH_inst.buf;
@@ -70,7 +83,7 @@ void MH_markObject(PObject *ref)
     return ;
   }
 
-  /* 如果是初次标记，就递归 */
+  /* 如果是初次标记，就递归遍历它的成员 */
   (*ref)->refs = RL_makeLink(ref, NULL);
   for(i = 0; i < (*ref)->meta->field_cnt; i ++)
   {
@@ -88,7 +101,7 @@ void MH_markRoot()
   PObject **cur;
   for(cur = MH_inst.stack; cur < MH_inst.stack_top; cur ++)
   {
-    /* 这里*cur是判断分页标记NULL，**cur是判断对象指针是否为NULL */
+    /* 这里*cur是判断分页标记NULL，**cur是判断指针变量是否指向NULL */
     if(*cur && **cur)
       MH_markObject(*cur);
   }
@@ -154,7 +167,6 @@ void MH_collect()
   MH_cleanAllTag();
   MH_markRoot();
   MH_rearrange();
-  MH_cleanAllTag();
 }
 
 /* 托管堆内存分配 */
@@ -210,6 +222,7 @@ void MH_enter(int var_cnt, ...)
     var = va_arg(ap, PObject*);
     MH_addStackVar(var);
   }
+
   /* 关闭变参表 */
   va_end(ap);
 }
