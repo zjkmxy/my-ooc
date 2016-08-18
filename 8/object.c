@@ -6,12 +6,12 @@
 #include <memory.h>
 #include <stdlib.h>
 
-/* g_È«¾Ö¶ÔÏó */
+/* g_å…¨å±€å¯¹è±¡ */
 Handle g_Object = NULL;
 Handle g_Block = NULL;
 Handle g_Int = NULL;
 
-/* gp_È«¾Ö¿é¶ÔÏó */
+/* gp_å…¨å±€å—å¯¹è±¡ */
 static Handle gp_slotCnt = NULL;
 static Handle gp_getSlot = NULL;
 static Handle gp_setSlot = NULL;
@@ -36,7 +36,7 @@ size_t Obj_compressSlot(PObject obj)
   size_t ret = 0;
   PSlot from, to, end;
 
-  /* Ñ¹Ëõ²»ÓÃµÄ²Û */
+  /* å‹ç¼©ä¸ç”¨çš„æ§½ */
   from = to = obj->slots;
   end = obj->slots + obj->slot_cap;
   for(; from < end; from ++)
@@ -58,7 +58,7 @@ size_t Obj_compressSlot(PObject obj)
     to->val = NULL;
   }
 
-  /* Èç¹ûÓĞ±ØÒªÔò¼õ°ë */
+  /* å¦‚æœæœ‰å¿…è¦åˆ™å‡åŠ */
   if(ret * 2 < obj->slot_cap && obj->slot_cap > DEFAULT_SLOT_CNT)
   {
     obj->slot_cap /= 2;
@@ -73,7 +73,7 @@ size_t Obj_calcSize(size_t slotCnt)
   return sizeof(Object) + sizeof(Slot) * (slotCnt - 1);
 }
 
-/* ´´½¨ĞÂµÄ¿Õ°×¶ÔÏó£¬Íê³É»ù±¾³õÊ¼»¯ºÍ¾ä±ú´æÕ» */
+/* åˆ›å»ºæ–°çš„ç©ºç™½å¯¹è±¡ï¼Œå®ŒæˆåŸºæœ¬åˆå§‹åŒ–å’Œå¥æŸ„å­˜æ ˆ */
 Handle Obj_newBlankObject()
 {
   size_t siz = Obj_calcSize(DEFAULT_SLOT_CNT);
@@ -89,7 +89,7 @@ Handle Obj_newBlankObject()
   return ret->handle;
 }
 
-/* »ñµÃ²Û£¬»á²éÕÒÆäÔ­ĞÎ */
+/* è·å¾—æ§½ï¼Œä¼šæŸ¥æ‰¾å…¶åŸå½¢ */
 Handle Obj_getSlot(PObject obj, Symbol slot)
 {
   PSlot cur, end;
@@ -115,7 +115,7 @@ Handle Obj_getSlot(PObject obj, Symbol slot)
   return NULL;
 }
 
-/* ÉèÖÃ²Û£¬²»»á´¥¼°Ô­ĞÎ */
+/* è®¾ç½®æ§½ï¼Œä¸ä¼šè§¦åŠåŸå½¢ */
 void Obj_setSlot(PObject obj, Symbol slot, Handle val)
 {
   PSlot cur, end, blank;
@@ -124,7 +124,7 @@ void Obj_setSlot(PObject obj, Symbol slot, Handle val)
   assert(obj);
   end = obj->slots + obj->slot_cap;
   blank = NULL;
-  /* ÒÑ¾­´æÔÚ£¬Ôò¸ÄĞ´ */
+  /* å·²ç»å­˜åœ¨ï¼Œåˆ™æ”¹å†™ */
   for(cur = obj->slots; cur != end; cur ++)
   {
     if(cur->name == slot)
@@ -137,7 +137,7 @@ void Obj_setSlot(PObject obj, Symbol slot, Handle val)
       blank = cur;
     }
   }
-  /* ÎŞ¿ÕÎ»ÔòÀ©Õ¹ */
+  /* æ— ç©ºä½åˆ™æ‰©å±• */
   handle = obj->handle;
   if(!blank)
   {
@@ -151,7 +151,7 @@ void Obj_setSlot(PObject obj, Symbol slot, Handle val)
       cur->val = NULL;
     }
   }
-  /* ÓĞ¿ÕÎ»ÔòĞÂ½¨ */
+  /* æœ‰ç©ºä½åˆ™æ–°å»º */
   blank->name = slot;
   blank->val = val;
 }
@@ -163,16 +163,16 @@ Handle Obj_clone(PObject obj)
   ret->handle = MH_newHandle(ret);
 
   /* 
-   * ÕâÀïÎÒÃÇÔÊĞí¿ËÂ¡ÌåÏñÔ­¶ÔÏóÒ»Ñù¿ÉÒÔÖ´ĞĞ
-   * ÕâÖÖÇé¿öÓ¦¸ÃÊÇºÜÉÙ¼ûµÄ£¬ÎÒ²¢Ã»ÓĞÉîÈë·ÖÎöÓÅÁÓ
-   * Ö»ÊÇºÜ×ÔÈ»µØÕâÃ´×öÁË¶øÒÑ£¬Î´±ØÊÇºÜºÃµÄ×ö·¨
+   * è¿™é‡Œæˆ‘ä»¬å…è®¸å…‹éš†ä½“åƒåŸå¯¹è±¡ä¸€æ ·å¯ä»¥æ‰§è¡Œ
+   * è¿™ç§æƒ…å†µåº”è¯¥æ˜¯å¾ˆå°‘è§çš„ï¼Œæˆ‘å¹¶æ²¡æœ‰æ·±å…¥åˆ†æä¼˜åŠ£
+   * åªæ˜¯å¾ˆè‡ªç„¶åœ°è¿™ä¹ˆåšäº†è€Œå·²ï¼Œæœªå¿…æ˜¯å¾ˆå¥½çš„åšæ³•
    */
   ret->exec = obj->exec;
   ret->size = siz;
   ret->slot_cap = DEFAULT_SLOT_CNT;
   memset(ret->slots, 0, sizeof(Slot)* DEFAULT_SLOT_CNT);
 
-  /* ÉèÖÃÔ­ĞÍ */
+  /* è®¾ç½®åŸå‹ */
   ret->slots[0].name = SYMBOL_PROTO;
   ret->slots[0].val = obj->handle;
 
@@ -187,12 +187,12 @@ Handle Block_make(MsgFunc msg_func, int trap_cnt, ...)
   Symbol slot;
   Handle val;
 
-  /* ¿ËÂ¡²¢ÉèÖÃÖ´ĞĞÌå */
+  /* å…‹éš†å¹¶è®¾ç½®æ‰§è¡Œä½“ */
   assert(g_Block);
   ret = Obj_clone(*g_Block);
   (*ret)->exec = msg_func;
 
-  /* °Ñ²¶»ñ±äÁ¿×°Èë²ÛÖĞ */
+  /* æŠŠæ•è·å˜é‡è£…å…¥æ§½ä¸­ */
   va_start(ap, trap_cnt);
   while(trap_cnt --)
   {
@@ -223,7 +223,7 @@ Handle send(Handle obj, Symbol msg, ...)
   va_list ap;
   Handle ret = Obj_getSlot(*obj, msg);
   va_start(ap, msg);
-  /* Èç¹ûÊÇ¿é£¨·½·¨£©£¬¾ÍÖ´ĞĞ£¬²¢·µ»ØÆä·µ»ØÖµ */
+  /* å¦‚æœæ˜¯å—ï¼ˆæ–¹æ³•ï¼‰ï¼Œå°±æ‰§è¡Œï¼Œå¹¶è¿”å›å…¶è¿”å›å€¼ */
   if(ret && (*ret)->exec != NULL)
   {
     ret = (*ret)->exec(obj, ret, ap);
@@ -233,23 +233,28 @@ Handle send(Handle obj, Symbol msg, ...)
 }
 
 /************************************************************************/
-/* ÒÔÏÂÊÇÒ»Ğ©»ù±¾·½·¨µÄMsgFunc°æ                                        */
+/* ä»¥ä¸‹æ˜¯ä¸€äº›åŸºæœ¬æ–¹æ³•çš„MsgFuncç‰ˆ                                        */
 /************************************************************************/
 
 Handle Obj_slotCntMsgFunc(Handle obj, Handle msg_func, va_list args)
 {
-  /*TODO*/
-  return NULL;
+  UNUSED(msg_func);
+  UNUSED(args);
+
+  assert(g_Int);
+  return send(g_Int, SYMBOL_MAKE, Obj_slotCnt(*obj));
 }
 
 Handle Obj_getSlotMsgFunc(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(msg_func);
   Symbol slot = va_arg(args, Symbol);
   return Obj_getSlot(*obj, slot);
 }
 
 Handle Obj_setSlotMsgFunc(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(msg_func);
   Symbol slot = va_arg(args, Symbol);
   Handle val = va_arg(args, Handle);
   Obj_setSlot(*obj, slot, val);
@@ -258,22 +263,31 @@ Handle Obj_setSlotMsgFunc(Handle obj, Handle msg_func, va_list args)
 
 Handle Obj_cloneMsgFunc(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(msg_func);
+  UNUSED(args);
   return Obj_clone(*obj);
 }
 
 Handle Obj_execMsgFunc(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(msg_func);
   Handle receptor = va_arg(args, Handle);
   return (*obj)->exec(receptor, (*obj)->handle, args);
 }
 
 Handle Obj_identMsgFunc(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(msg_func);
+  UNUSED(args);
   return obj;
 }
 
 Handle Block_makeMsgFunc(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(obj);
+  UNUSED(msg_func);
+  UNUSED(args);
+
   MsgFunc func;
   Handle ret;
   Symbol slot;
@@ -282,12 +296,12 @@ Handle Block_makeMsgFunc(Handle obj, Handle msg_func, va_list args)
 
   func = va_arg(args, MsgFunc);
 
-  /* ¿ËÂ¡²¢ÉèÖÃÖ´ĞĞÌå */
+  /* å…‹éš†å¹¶è®¾ç½®æ‰§è¡Œä½“ */
   assert(g_Block);
   ret = Obj_clone(*g_Block);
   (*ret)->exec = func;
 
-  /* °Ñ²¶»ñ±äÁ¿×°Èë²ÛÖĞ */
+  /* æŠŠæ•è·å˜é‡è£…å…¥æ§½ä¸­ */
   trap_cnt = va_arg(args, int);
   while(trap_cnt --)
   {
@@ -310,22 +324,22 @@ int Obj_getExtra(Handle obj)
 }
 
 /************************************************************************/
-/* ÒÔÏÂÊÇÔ­ĞÍÏµÍ³µÄ³õÊ¼»¯ºÍ¹¹³É                                         */
+/* ä»¥ä¸‹æ˜¯åŸå‹ç³»ç»Ÿçš„åˆå§‹åŒ–å’Œæ„æˆ                                         */
 /************************************************************************/
 
 /* 
- * ´´½¨ObjectÔ­ĞÍ¶ÔÏóºÍBlockÔ­ĞÍ¶ÔÏó
- * Ôö¼ÓËüÃÇµÄ»ù±¾²Û
+ * åˆ›å»ºObjectåŸå‹å¯¹è±¡å’ŒBlockåŸå‹å¯¹è±¡
+ * å¢åŠ å®ƒä»¬çš„åŸºæœ¬æ§½
  */
 void Obj_loadObjectAndBlock()
 {
-  /* ¹¹Ôì¶ÔÏó */
+  /* æ„é€ å¯¹è±¡ */
   g_Object = Obj_newBlankObject();
   g_Block = Obj_clone(*g_Object);
   Obj_setSlot(*g_Object, SYMBOL_TYPE, g_Object);
   Obj_setSlot(*g_Block, SYMBOL_TYPE, g_Block);
 
-  /* ·â×°»ù±¾·½·¨ */
+  /* å°è£…åŸºæœ¬æ–¹æ³• */
   gp_slotCnt = Block_make(Obj_slotCntMsgFunc, 0);
   gp_getSlot = Block_make(Obj_getSlotMsgFunc, 0);
   gp_setSlot = Block_make(Obj_setSlotMsgFunc, 0);
@@ -334,7 +348,7 @@ void Obj_loadObjectAndBlock()
   gp_ident = Block_make(Obj_identMsgFunc, 0);
   gp_blockMake = Block_make(Block_makeMsgFunc, 0);
 
-  /* ½«·½·¨×÷Îª²Û¼ÓÈëÔ­ĞÎ */
+  /* å°†æ–¹æ³•ä½œä¸ºæ§½åŠ å…¥åŸå½¢ */
   Obj_setSlot(*g_Object, SYMBOL_SLOTCNT, gp_slotCnt);
   Obj_setSlot(*g_Object, SYMBOL_GETSLOT, gp_getSlot);
   Obj_setSlot(*g_Object, SYMBOL_SETSLOT, gp_setSlot);
@@ -342,7 +356,7 @@ void Obj_loadObjectAndBlock()
   Obj_setSlot(*g_Object, SYMBOL_IDENT, gp_ident);
 
   Obj_setSlot(*g_Block, SYMBOL_EXEC, gp_exec);
-  Obj_setSlot(*g_Block, SYMBOL_CLONE, gp_ident); /* BlockÊÇµ¥Àı¶ÔÏó */
+  Obj_setSlot(*g_Block, SYMBOL_CLONE, gp_ident); /* Blockæ˜¯å•ä¾‹å¯¹è±¡ */
   Obj_setSlot(*g_Block, SYMBOL_MAKE, gp_blockMake);
 }
 

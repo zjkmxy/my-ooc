@@ -9,8 +9,8 @@ static Handle Int_add(Handle obj, Handle msg_func, va_list args);
 static Handle Int_print(Handle obj, Handle msg_func, va_list args);
 
 /*
- * ´´½¨IntÔ­ĞÍ¶ÔÏó£¬Ôö¼ÓÆä»ù±¾²Û
- * ÕâÀïÎÒÃÇ²»ÔÙĞèÒªÓÃÔ­Ê¼·½·¨ÁË£¬ÎÒ»á¾¡Á¿ÏñÕı³£±à³ÌÒ»Ñù²Ù×÷
+ * åˆ›å»ºIntåŸå‹å¯¹è±¡ï¼Œå¢åŠ å…¶åŸºæœ¬æ§½
+ * è¿™é‡Œæˆ‘ä»¬ä¸å†éœ€è¦ç”¨åŸå§‹æ–¹æ³•äº†ï¼Œæˆ‘ä¼šå°½é‡åƒæ­£å¸¸ç¼–ç¨‹ä¸€æ ·æ“ä½œ
  */
 void Int_loadInt()
 {
@@ -25,10 +25,13 @@ void Int_loadInt()
 }
 
 /************************************************************************/
-/* »ù±¾µÄ·½·¨                                                           */
+/* åŸºæœ¬çš„æ–¹æ³•                                                           */
 /************************************************************************/
 Handle Int_make(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(msg_func);
+  UNUSED(obj);
+
   Handle ret;
   int val;
 
@@ -36,13 +39,15 @@ Handle Int_make(Handle obj, Handle msg_func, va_list args)
   ret = send(g_Int, SYMBOL_CLONE);
   val = va_arg(args, int);
   Obj_setExtra(ret, val);
-  /* ·µ»ØÖµÖØÈëÕ»±ÜÃâËğÊ§ */
+  /* è¿”å›å€¼é‡å…¥æ ˆé¿å…æŸå¤± */
   MH_return(ret);
   return ret;
 }
 
 Handle Int_add(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(msg_func);
+
   Handle ret;
   Handle rhs;
 
@@ -56,6 +61,9 @@ Handle Int_add(Handle obj, Handle msg_func, va_list args)
 
 Handle Int_print(Handle obj, Handle msg_func, va_list args)
 {
+  UNUSED(msg_func);
+  UNUSED(args);
+
   MH_enter();
   printf("%d\n", Obj_getExtra(obj));
   MH_return(NULL);

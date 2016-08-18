@@ -93,10 +93,9 @@ void MH_markRoot()
 size_t MH_moveObject(PObject from, PObject to)
 {
   size_t siz;
-  size_t slotcnt;
 
   /* 对象的压缩，每次最多减半一次 */
-  slotcnt = Obj_compressSlot(from);
+  Obj_compressSlot(from);
 
   /* 复制对象，返回大小 */
   siz = from->size;

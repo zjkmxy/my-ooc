@@ -3,6 +3,9 @@
 
 #include <stdarg.h>
 
+/* æœªä½¿ç”¨çš„å‚æ•° */
+#define UNUSED(param) (void)(param)
+
 struct Object;
 typedef struct Object Object;
 typedef struct Object *PObject;
@@ -11,19 +14,19 @@ typedef struct Slot Slot;
 typedef struct Slot *PSlot;
 typedef PObject *Handle;
 
-/* ÕâÀï°Ñ·ûºÅ¶¨ÒåÎªÕûĞÍ */
+/* è¿™é‡ŒæŠŠç¬¦å·å®šä¹‰ä¸ºæ•´å‹ */
 typedef int Symbol;
 
-/* ÏûÏ¢´¦Àíº¯Êı */
+/* æ¶ˆæ¯å¤„ç†å‡½æ•° */
 typedef Handle(*MsgFunc)(Handle obj, Handle msg_func, va_list args);
 
 /* 
- * ÕâÀï¶¨ÒåÁËÓÃµ½µÄ·ûºÅ
- * ¸üºÏÀíµÄ×ö·¨ÊÇÊ¹ÓÃ·ûºÅ±í»ò¹şÏ£Ëã·¨µÈ
+ * è¿™é‡Œå®šä¹‰äº†ç”¨åˆ°çš„ç¬¦å·
+ * æ›´åˆç†çš„åšæ³•æ˜¯ä½¿ç”¨ç¬¦å·è¡¨æˆ–å“ˆå¸Œç®—æ³•ç­‰
  */
-/* Ä¬ÈÏ²ÛÎ»´óĞ¡ */
+/* é»˜è®¤æ§½ä½å¤§å° */
 #define DEFAULT_SLOT_CNT  20
-/* Ä¬ÈÏµÄ·ûºÅ */
+/* é»˜è®¤çš„ç¬¦å· */
 #define SYMBOL_PROTO    1
 #define SYMBOL_TYPE     2
 #define SYMBOL_SLOTCNT  3
@@ -33,11 +36,11 @@ typedef Handle(*MsgFunc)(Handle obj, Handle msg_func, va_list args);
 #define SYMBOL_EXEC     7
 #define SYMBOL_IDENT    8
 #define SYMBOL_MAKE     9
-/* ¿Õ°×·ûºÅ */
+/* ç©ºç™½ç¬¦å· */
 #define NIL 0
 
 /*
-* Ïò¶ÔÏóobj·¢ËÍmsgÏûÏ¢£¬ºóÃæµÄÊÇ²ÎÊı
+* å‘å¯¹è±¡objå‘é€msgæ¶ˆæ¯ï¼Œåé¢çš„æ˜¯å‚æ•°
 */
 Handle send(Handle obj, Symbol msg, ...);
 
@@ -48,13 +51,13 @@ Handle Block_make(MsgFunc msg_func, int trap_cnt, ...);
 void System_init();
 void System_final();
 
-/* ½øÈëĞÂµÄº¯Êı */
+/* è¿›å…¥æ–°çš„å‡½æ•° */
 void MH_enter();
 
-/* º¯Êı·µ»Ø */
+/* å‡½æ•°è¿”å› */
 void MH_return(Handle handle);
 
-/* g_È«¾Ö¶ÔÏó */
+/* g_å…¨å±€å¯¹è±¡ */
 extern Handle g_Object;
 extern Handle g_Block;
 
