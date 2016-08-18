@@ -1,3 +1,5 @@
+/*8:7*/
+
 #include "integer.h"
 
 #include <memory.h>
@@ -10,7 +12,7 @@ static Handle Int_print(Handle obj, Handle msg_func, va_list args);
 
 /*
  * 创建Int原型对象，增加其基本槽
- * 这里我们不再需要用原始方法了，我会尽量像正常编程一样操作
+ * 正常编程时候我们只需要send方法就足够了
  */
 void Int_loadInt()
 {

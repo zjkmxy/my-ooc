@@ -110,18 +110,37 @@
 #include <assert.h>
 #include "system_export.h"
 
+/*
+ * 槽
+ * 这里我们采用int型的Symbol（在system_export中定义）
+ * 来代表“符号”。
+ * 其他编译器可能会是用字符串之类的。
+ * 同时我们采用二级指针（句柄Handle）配合托管堆进行内存管理
+ */
 struct Slot
 {
   Symbol name;
   Handle val;
 };
 
+/*
+ * 严格来讲，对象中除了槽外还应该包括“额外数据”
+ * 比如Int类型对象的值，还有Block/Closure对象的函数指针
+ * 以及Array类型对象的每个元素，包括String也是特殊的Array
+ * 这些内容作为对象系统的“黑盒内部”，无法通过系统外部访问到
+ * 但是支持着整个系统的运作。
+ * 这里我们固化了两个额外数据：exec和extra_data
+ * 原则上来讲额外数据应该是动态的，因为不是每个对象都需要这些数据
+ */
 struct Object
 {
   /* 对象大小 */
   size_t size;
 
-  /* 执行体，供闭包用 */
+  /* 
+   * 闭包/代码块对象的函数指针
+   * 额外数据
+   */
   MsgFunc exec;
 
   /* 唯一的句柄 */
@@ -130,15 +149,19 @@ struct Object
   /* 访问标志 */
   bool access;
 
-  /* 额外数据 */
+  /* 
+   * Int类型的值
+   * 额外数据
+   */
   int extra_data;
 
-  /* 槽位个数(空白槽也算) */
+  /* 分配空间的槽位个数(空白槽也算) */
   size_t slot_cap;
 
   /*
   * 槽位数组
   * 特殊槽位如下：
+  * NIL      : 空槽位
   * type     : 对象的类型
   * proto    : 该对象的原形
   * clone    : 克隆操作
@@ -156,15 +179,25 @@ struct Object
   Slot slots[1];
 };
 
+/* 获得obj槽的个数（有效个数，不是容量） */
 size_t Obj_slotCnt(PObject obj);
+
+/* 压缩obj槽，并返回压缩后它的个数（有效个数，不是容量） */
 size_t Obj_compressSlot(PObject obj);
+
+/* 根据槽的个数（容量）计算对象空间大小 */
 size_t Obj_calcSize(size_t slotCnt);
 
+/* 获得obj的slot槽，会搜索它的原型 */
 Handle Obj_getSlot(PObject obj, Symbol slot);
+
+/* 设置obj的slot槽为val，不会搜索它的原型，会自动扩充对象 */
 void Obj_setSlot(PObject obj, Symbol slot, Handle val);
+
+/* 克隆obj，返回句柄 */
 Handle Obj_clone(PObject obj);
 
+/* 执行代码块对象obj，作用于对象receptor，...是参数 */
 Handle Obj_exec(PObject obj, Handle receptor, ...);
-Handle Obj_identMsgFunc(Handle obj, Handle msg_func, va_list args);
 
 #endif

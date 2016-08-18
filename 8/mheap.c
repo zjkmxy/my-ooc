@@ -1,3 +1,5 @@
+/*8:4*/
+
 #include "mheap.h"
 #include <stdlib.h>
 #include <memory.h>
@@ -22,6 +24,10 @@ struct ManagedHeap
 
   /*
   * 句柄堆空余链表头
+  * 因为句柄是二级指针中的外一层所以不能移动：
+  * Handle h ; *h -> ptr ; *ptr -> obj;
+  * obj移动时改*h = ptr的值，但是h本身不能改
+  * 因此我们只能用空余链表管理
   * 如果指向handle_top，我们必须扩充句柄堆
   */
   Handle handle_idie;
@@ -29,6 +35,9 @@ struct ManagedHeap
   /*
   * 局部句柄栈
   * 存储函数中临时产生的对象的句柄
+  * 就是原来的根对象变量栈
+  * 不同的是，原来我们需要记录所有的变量
+  * 现在我们只需要在每个对象刚创建好的时候把句柄丢进来就行。
   */
   Handle *stack;
   size_t stack_len;
@@ -258,6 +267,7 @@ void MH_expandObject(Handle obj, size_t new_siz)
 void MH_return(Handle handle)
 {
   MH_leave();
+  /* 这里我们必须将返回值再次入栈，否则将因为函数的退出而被销毁 */
   if(handle)
   {
     MH_addStackVar(handle);

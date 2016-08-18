@@ -1,4 +1,4 @@
-/*7:2*/
+/*8:5*/
 
 #include "integer.h"
 #include "object.h"
@@ -168,6 +168,7 @@ Handle Obj_clone(PObject obj)
    * 只是很自然地这么做了而已，未必是很好的做法
    */
   ret->exec = obj->exec;
+  ret->extra_data = obj->extra_data;
   ret->size = siz;
   ret->slot_cap = DEFAULT_SLOT_CNT;
   memset(ret->slots, 0, sizeof(Slot)* DEFAULT_SLOT_CNT);
@@ -358,6 +359,14 @@ void Obj_loadObjectAndBlock()
   Obj_setSlot(*g_Block, SYMBOL_EXEC, gp_exec);
   Obj_setSlot(*g_Block, SYMBOL_CLONE, gp_ident); /* Block是单例对象 */
   Obj_setSlot(*g_Block, SYMBOL_MAKE, gp_blockMake);
+
+  /* 
+   * 这里关于“单例”的处理有些奇特：
+   * 一般来说，我们只要让clone指向自己就能实现单例模式
+   * 但是这里Block是非正常手段克隆的，而且我们希望Block的所有
+   * 实例（克隆体）也都是单例模式
+   * 于是我们将clone指向了一个返回self的方法
+   */
 }
 
 void System_init()
